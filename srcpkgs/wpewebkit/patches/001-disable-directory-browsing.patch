@@ -1,0 +1,13 @@
+--- a/Source/WebKit/NetworkProcess/soup/NetworkDataTaskSoup.cpp
++++ b/Source/WebKit/NetworkProcess/soup/NetworkDataTaskSoup.cpp
+@@ -1747,6 +1747,10 @@
+         return;
+     }
+ 
++    // disable directory browsing
++    task->didFail(internalError(task->m_firstRequest.url()));
++    return;
++
+     GUniqueOutPtr<GError> error;
+     GRefPtr<GFileEnumerator> enumerator = adoptGRef(g_file_enumerate_children_finish(file, result, &error.outPtr()));
+     if (error)

@@ -1,0 +1,42 @@
+# Template file for 'wpewebkit'
+pkgname=wpewebkit
+version=2.48.1
+revision=1
+build_style=cmake
+configure_args="-DPORT=WPE -DCMAKE_BUILD_TYPE=Release
+ -DCMAKE_LINKER=${XBPS_CROSS_TRIPLET}-gcc -DCMAKE_SKIP_RPATH=ON
+ -DENABLE_BUBBLEWRAP_SANDBOX=OFF -DENABLE_DOCUMENTATION=OFF -DENABLE_GAMEPAD=OFF
+ -DENABLE_INTROSPECTION=OFF -DENABLE_JOURNALD_LOG=OFF -DENABLE_WEBDRIVER=OFF -DENABLE_FULLSCREEN_API=OFF
+ -DENABLE_MINIBROWSER=OFF -DUSE_LCMS=OFF -DUSE_JPEGXL=OFF -DUSE_AVIF=OFF -DENABLE_NOTIFICATIONS=OFF
+ -DUSE_GSTREAMER_TRANSCODER=OFF -DUSE_ATK=OFF -DUSE_LIBBACKTRACE=OFF -DUSE_SYSTEM_SYSPROF_CAPTURE=NO
+ -DENABLE_SPEECH_SYNTHESIS=OFF
+ -DENABLE_WEB_RTC=ON"
+hostmakedepends="which pkg-config perl python3 ruby unifdef gperf wayland-devel glib-devel"
+makedepends="openssl-devel harfbuzz-devel libjpeg-turbo-devel libpng-devel libepoxy-devel libgcrypt-devel
+ libtasn1-devel libxkbcommon-devel libxml2-devel sqlite-devel libwebp-devel libwpe-devel libsoup3-devel
+ woff2-devel libxslt-devel libdrm-devel glib-devel zlib-devel icu-devel MesaLib-devel libinput-devel
+ gst-plugins-base1-devel gst-plugins-bad1-devel wpebackend-fdo-devel wayland-protocols"
+depends="gst-plugins-good1"
+short_desc="WPE port of the WebKit browser engine"
+maintainer="Orphaned <orphan@voidlinux.org>"
+license="LGPL-2.1-or-later"
+homepage="https://wpewebkit.org/"
+distfiles="https://wpewebkit.org/releases/wpewebkit-${version}.tar.xz"
+checksum=2f411b692bb4c2a924d9bddf0c794fd69a24931ad836d6a93c9a65f5adb0357f
+make_check=no # TODO
+
+post_install() {
+	vlicense Source/WebCore/LICENSE-APPLE
+	vlicense Source/WebCore/LICENSE-LGPL-2.1
+	vlicense Source/WebCore/LICENSE-LGPL-2
+}
+
+wpewebkit-devel_package() {
+	depends="glib-devel libsoup3-devel libwpe-devel ${sourcepkg}>=${version}_${revision}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include/wpe-webkit-2.0
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+	}
+}
